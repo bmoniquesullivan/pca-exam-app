@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/QuestionPage.css'; // We'll create this CSS file soon
+import '../styles/QuestionPage.css';
 
 function QuestionPage({ question, onSubmitAnswer, showFeedback, isCorrect }) {
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  // --- MODIFICATION START ---
+  // Now, selectedAnswer will be an array of the IDs of the selected options
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  // --- MODIFICATION END ---
 
   const handleOptionClick = (optionId) => {
-    setSelectedAnswer(optionId);
+    // --- MODIFICATION START ---
+    if (selectedAnswers.includes(optionId)) {
+      // If already selected, remove it (toggle off)
+      setSelectedAnswers(selectedAnswers.filter(id => id !== optionId));
+    } else {
+      // If not selected, add it
+      setSelectedAnswers([...selectedAnswers, optionId]);
+    }
+    // --- MODIFICATION END ---
   };
 
   const handleConfirm = () => {
-    if (selectedAnswer !== null) {
-      onSubmitAnswer(selectedAnswer);
+    // --- MODIFICATION START ---
+    if (selectedAnswers.length > 0) {
+      // Pass the array of selected answers
+      onSubmitAnswer(selectedAnswers);
     }
+    // --- MODIFICATION END ---
   };
 
-  // Reset selected answer when a new question is loaded
+  // Reset selected answers when a new question is loaded
   useEffect(() => {
-    setSelectedAnswer(null);
+    setSelectedAnswers([]); // Reset to an empty array
   }, [question]);
 
   if (!question) {
@@ -41,8 +55,11 @@ function QuestionPage({ question, onSubmitAnswer, showFeedback, isCorrect }) {
           {question.options.map((option) => (
             <div
               key={option.id}
-              className={`option-item ${selectedAnswer === option.id ? 'selected' : ''}`}
+              // --- MODIFICATION START ---
+              // Add 'selected' class if the option's ID is in our selectedAnswers array
+              className={`option-item ${selectedAnswers.includes(option.id) ? 'selected' : ''}`}
               onClick={() => handleOptionClick(option.id)}
+              // --- MODIFICATION END ---
             >
               <span className="option-id">{option.id}</span>
               <span className="option-text">{option.text}</span>
@@ -51,10 +68,10 @@ function QuestionPage({ question, onSubmitAnswer, showFeedback, isCorrect }) {
         </div>
 
         <div className="action-buttons">
-          <button className="confirm-button" onClick={handleConfirm} disabled={selectedAnswer === null}>
+          <button className="confirm-button" onClick={handleConfirm} disabled={selectedAnswers.length === 0}> {/* Disabled if nothing selected */}
             Confirm
           </button>
-          <button className="clear-button" onClick={() => setSelectedAnswer(null)}>
+          <button className="clear-button" onClick={() => setSelectedAnswers([])}> {/* Clear all selections */}
             Clear
           </button>
         </div>
