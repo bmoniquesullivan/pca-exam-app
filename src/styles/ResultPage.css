@@ -1,0 +1,45 @@
+.result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh; /* Occupy significant vertical space */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin: 20px;
+}
+
+.result-card {
+  text-align: center;
+  color: #3c4043;
+}
+
+.result-card h2 {
+  color: #1a73e8; /* Google Blue */
+  margin-bottom: 20px;
+  font-size: 2em;
+}
+
+.result-card p {
+  font-size: 1.3em;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.restart-button {
+  background-color: #4285f4; /* Google Blue */
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 25px;
+}
+
+.restart-button:hover {
+  background-color: #357ae8;
+}
