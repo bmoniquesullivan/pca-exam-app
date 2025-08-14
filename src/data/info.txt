@@ -1,0 +1,5 @@
+//prompts
+//Extract the text on these images and convert it into a json file
+// This file will be used for an app that offers exam questions practice. I need to extract each line of "options": separately and Identify themselves as either A, B, C, D, E, or F. Because the logic of the app will need to verify if the letter chosen is the on the "correctAnswer": option
+
+Extract the text on these images and convert it into a json file. This file will be used for an app that offers exam questions practice. I need to extract each line of "options": separately and Identify themselves as either A, B, C, D, E, or F. Because the logic of the app will need to verify if the letter chosen is the on the "correctAnswer": option. use each option as "id"

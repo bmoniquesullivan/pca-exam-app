@@ -36,11 +36,15 @@ function QuestionPage({ question, onSubmitAnswer, showFeedback, isCorrect }) {
   if (!question) {
     return <div>Loading question...</div>;
   }
-
+const googleIconUrl = "https://storage.googleapis.com/pub_files_moni/images/gcplogosmall.png"
   return (
     <div className="question-container">
       <div className="question-header">
-        <span className="google-icon">G</span>
+        <img
+          src={googleIconUrl} 
+          alt="Google icon" 
+          className="google-icon" 
+        />
         <h2 className="exam-title">Professional Cloud Architect Exam Practice</h2>
       </div>
 

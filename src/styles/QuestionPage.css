@@ -174,3 +174,10 @@
 .check-documentation-button:hover {
   background-color: #1565c0;
 }
+
+.google-icon {
+  width: 30px;   /* Or whatever size you need */
+  height: 24px;  /* Or whatever size you need */
+  margin-right: 8px;
+  vertical-align: middle; /* Aligns the image nicely with the text */
+}

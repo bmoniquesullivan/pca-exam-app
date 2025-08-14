@@ -5,23 +5,18 @@ import ResultPage from './components/ResultPage';
 import rawQuestionsData from './data/questions.json';
 import './styles/global.css';
 
-// --- Fisher-Yates (Knuth) Shuffle Algorithm ---
+const QUESTIONS_PER_EXAM = 5;
+
 function shuffleArray(array) {
     let currentIndex = array.length, randomIndex;
-
-    // While there remain elements to shuffle.
     while (currentIndex !== 0) {
-        // Pick a remaining element.
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
-        // And swap it with the current element.
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
     }
     return array;
 }
-// --- End of Shuffle Algorithm ---
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -29,34 +24,29 @@ function App() {
   const [userAnswers, setUserAnswers] = useState([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
-  const [shuffledQuestions, setShuffledQuestions] = useState([]); // State to hold shuffled questions
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
 
-  const questions = rawQuestionsData.examQuestions;
-  const totalQuestions = questions.length;
-
-  // --- MODIFICATION START: Shuffle questions when the component mounts ---
-  useEffect(() => {
-      // Shuffle the questions once when the component mounts
-      setShuffledQuestions(shuffleArray([...questions]));
-  }, [questions]); // Dependency on 'questions' ensures it re-shuffles if questions were to change dynamically (not the case here, but good practice)
-  // --- MODIFICATION END ---
+  const questions = rawQuestionsData;
+  const totalQuestions = QUESTIONS_PER_EXAM;
 
   const handleStartExam = () => {
-    // When starting a new exam, re-shuffle the questions
-    setShuffledQuestions(shuffleArray([...questions]));
+    const allQuestionsShuffled = shuffleArray([...questions]);
+    const examQuestions = allQuestionsShuffled.slice(0, QUESTIONS_PER_EXAM);
+    setShuffledQuestions(examQuestions);
+    
     setCurrentPage('question');
     setCurrentQuestionIndex(0);
     setUserAnswers([]);
     setShowFeedback(false);
   };
 
-  const handleSubmitAnswer = (selectedAnswers) => {
-    const currentQuestion = shuffledQuestions[currentQuestionIndex]; // Use the shuffled questions
+  const handleSubmitAnswer = (selectedAnswerIds) => {
+    const currentQuestion = shuffledQuestions[currentQuestionIndex];
     const correctAnswerString = currentQuestion.correctAnswer;
-
-    const sortedSelectedAnswers = [...selectedAnswers].sort().join('');
-    const sortedCorrectAnswer = [...correctAnswerString].sort().join('');
-
+    
+    const sortedSelectedAnswers = [...selectedAnswerIds].sort().join('');
+    const sortedCorrectAnswer = [...correctAnswerString.split('')].sort().join('');
+    
     const correct = sortedSelectedAnswers === sortedCorrectAnswer;
 
     setIsAnswerCorrect(correct);
@@ -65,9 +55,8 @@ function App() {
     setUserAnswers(prev => [
       ...prev,
       {
-        questionIndex: currentQuestionIndex, // Still refers to its index in the *shuffled* array
-        userAnswer: selectedAnswers,
-        correctAnswer: correctAnswerString,
+        question: currentQuestion,
+        userAnswerIds: selectedAnswerIds,
         isCorrect: correct
       }
     ]);
@@ -83,9 +72,6 @@ function App() {
   };
 
   const handleRestartExam = () => {
-    // --- MODIFICATION START: Re-shuffle when restarting ---
-    setShuffledQuestions(shuffleArray([...questions]));
-    // --- MODIFICATION END ---
     setCurrentPage('home');
     setCurrentQuestionIndex(0);
     setUserAnswers([]);
@@ -99,7 +85,7 @@ function App() {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [showFeedback, currentPage, totalQuestions]);
+  }, [showFeedback, currentPage, currentQuestionIndex, totalQuestions]);
 
   let componentToRender;
   switch (currentPage) {
@@ -107,19 +93,20 @@ function App() {
       componentToRender = <HomePage onStart={handleStartExam} />;
       break;
     case 'question':
-      // Ensure we don't try to render a question if the index is out of bounds
-      if (currentQuestionIndex >= shuffledQuestions.length) {
-          setCurrentPage('result'); // Fallback to result page if something goes wrong
-          componentToRender = <div>Error: Ran out of questions or invalid index.</div>;
-      } else {
+      if (currentQuestionIndex >= shuffledQuestions.length && shuffledQuestions.length > 0) {
+          setCurrentPage('result');
+          componentToRender = <div>Loading results...</div>;
+      } else if (shuffledQuestions.length > 0) {
           componentToRender = (
               <QuestionPage
-                  question={shuffledQuestions[currentQuestionIndex]} // Use shuffledQuestions
+                  question={shuffledQuestions[currentQuestionIndex]}
                   onSubmitAnswer={handleSubmitAnswer}
                   showFeedback={showFeedback}
                   isCorrect={isAnswerCorrect}
               />
           );
+      } else {
+          componentToRender = <div>Preparing your exam...</div>;
       }
       break;
     case 'result':
@@ -129,6 +116,7 @@ function App() {
           score={score}
           totalQuestions={totalQuestions}
           onRestart={handleRestartExam}
+          results={userAnswers}
         />
       );
       break;

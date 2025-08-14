@@ -3,25 +3,27 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 70vh; /* Occupy significant vertical space */
+  min-height: 70vh;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+  padding: 40px; /* This padding affects the available space */
   margin: 20px;
+  box-sizing: border-box;
+  overflow: hidden; /* Crucial: hides anything that overflows the container */
 }
 
-.intro-text {
+.home-page-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
   margin-bottom: 30px;
-  color: #333;
-  font-size: 1.1em;
-  line-height: 1.6;
+  border-radius: 4px;
+  max-height: calc(70vh - 40px - 30px - 80px); /* Adjust based on container padding, margin, and button space */
+  object-fit: contain; /* This ensures the image scales to fit without cropping, maintaining aspect ratio */
 }
 
-.intro-text p {
-  margin-bottom: 15px;
-}
-
+/* You might also need to adjust the button margin to ensure it's not pushed off screen */
 .start-button {
   background-color: #4285f4; /* Google Blue */
   color: white;
@@ -33,6 +35,8 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Consider margin-top if button is too close to image */
+  /* margin-top: 20px; */
 }
 
 .start-button:hover {
